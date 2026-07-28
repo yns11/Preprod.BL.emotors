@@ -1,0 +1,18 @@
+# Versions épinglées (CDC) : une montée de version ne peut pas casser l'app.
+# streamlit >= 1.41 requis : sélection de lignes/cellules dans st.dataframe
+# (ruban activé au clic sur une ligne) et boîtes de dialogue larges.
+streamlit==1.49.1
+# >= 0.89.0 : API Lakebase Autoscaling et rotation OAuth stabilisées.
+databricks-sdk==0.89.0
+# Client Postgres (Lakebase) — wheel binaire, pas de compilation au déploiement.
+psycopg[binary]==3.2.3
+psycopg-pool==3.2.3
+pandas==2.2.3
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+# Décodage des photos HEIC/HEIF (format par défaut iPhone / Android récents).
+pillow==10.4.0
+pillow-heif==0.18.0
+# Brouillon éphémère : lecture/écriture sessionStorage du navigateur,
+# isolée par utilisateur et supprimée à la fermeture de l'onglet.
+streamlit-js-eval==0.1.7

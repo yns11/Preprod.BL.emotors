@@ -1,0 +1,68 @@
+# =============================================================================
+# App « Administration des BL » — toute la configuration est ici.
+#
+# NON déclaré ici, car injecté automatiquement par Databricks Apps :
+#   * PGHOST / PGPORT / PGDATABASE / PGUSER / PGSSLMODE -> ressource Database
+#     (Lakebase), à ajouter dans Edit ▸ Resources avec la clé « postgres » ;
+#   * l'identité SSO de l'utilisateur (en-têtes HTTP).
+# =============================================================================
+command: ["streamlit", "run", "app.py", "--server.headless=true"]
+env:
+  - name: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+    value: "false"
+
+  # --- Environnement et sécurité ---------------------------------------------
+  - name: BL_ENVIRONMENT
+    value: "prod"
+  - name: BL_RBAC_MODE
+    value: "strict"
+  # Administrateurs de secours : indispensable au premier démarrage pour
+  # pouvoir ouvrir Gestion ▸ Rôles et attribuer les droits.
+  - name: BL_BOOTSTRAP_ADMINS
+    value: "younes.elhachi1@emotors.com"
+
+  # --- Base de données --------------------------------------------------------
+  - name: BL_PG_SCHEMA
+    value: "bl_demat"
+  - name: BL_TIMEZONE
+    value: "Europe/Paris"
+  - name: BL_PAGE_SIZE
+    value: "50"
+
+  # --- Notification Teams : passage EDI NOK -> OK -----------------------------
+  # URL du flux « Workflows » du canal Teams. Peut être la même que celle de
+  # l'app Création. Vide = aucune notification envoyée.
+  - name: BL_TEAMS_WEBHOOK_EDI
+    value: ""
+  - name: BL_TEAMS_TIMEOUT_S
+    value: "8"
+  # Méthode de mention des gestionnaires :
+  #   flow  (défaut) l'app envoie les e-mails + le marqueur {{MENTIONS}} ; le
+  #         flux Power Automate croise ces e-mails avec les membres de l'équipe
+  #         et génère les jetons de mention (voir GUIDE, « Rendre les mentions
+  #         cliquables »).
+  #   texte noms en clair, sans mention — repli si le flux ne peut pas être
+  #         modifié.
+  - name: BL_TEAMS_MENTION_MODE
+    value: "flow"
+
+  # --- Extraction IA ----------------------------------------------------------
+  # Endpoint de model serving. Sert à l'archivage par lots (lecture des pages)
+  # ET à l'analyse rédigée des rapports d'activité. Ajouter la ressource
+  # « Serving endpoint » à l'app avec la permission « Can query ».
+  # Valeur vide = archivage en saisie manuelle, rapports sans analyse.
+  - name: BL_LLM_ENDPOINT
+    value: "databricks-claude-opus-4-8"
+
+  # --- Archivage par lots (PDF multipage : une page = un BL) ------------------
+  - name: BL_LOT_MAX_PAGES
+    value: "200"
+  # Pages envoyées au modèle par appel. Plage utile 3–6 : plus haut = moins
+  # d'appels, mais premier affichage plus lent.
+  - name: BL_LOT_TAILLE_IA
+    value: "4"
+  # Bornes des images produites depuis le PDF (une page = une image en base).
+  - name: BL_MAX_IMAGE_BYTES
+    value: "4194304"
+  - name: BL_MAX_DIMENSION_PX
+    value: "3508"
